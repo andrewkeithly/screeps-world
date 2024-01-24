@@ -22,6 +22,7 @@ declare global {
   }
 
   // Syntax for adding properties to `global` (ex "global.log")
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
     interface Global {
       log: any;
@@ -40,4 +41,58 @@ export const loop = ErrorMapper.wrapLoop(() => {
       delete Memory.creeps[name];
     }
   }
+
+  // constants
+  const spawn1 = Game.spawns.Spawn1;
+  const room = spawn1.room;
+
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
+  console.log(`Room energy available: ${room.energyAvailable}`);
+  const sources = spawn1.room.find(FIND_SOURCES);
+  const harvesters = _.filter(Game.creeps, creep => creep.memory.role === "harvester");
+
+  // Spawn a creep
+  if (spawn1.spawning) {
+    const spawningCreep = Game.creeps[spawn1.spawning.name];
+    spawn1.room.visual.text("🛠️" + spawningCreep.memory.role, spawn1.pos.x + 1, spawn1.pos.y, {
+      align: "left",
+      opacity: 0.8
+    });
+  } else {
+    console.log(`Harvesters: ${harvesters.length}`);
+
+    if (harvesters.length < 10) {
+      const newName = `Harvester ${harvesters.length}`;
+      console.log("Spawning new harvester: " + newName);
+      spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
+        memory: { role: "harvester", room: room.name, working: true }
+      });
+    }
+  }
+
+  // Set creeps to work
+  harvesters.forEach(harvester => {
+    console.log(
+      `${
+        harvester.name
+      } is carrying ${harvester.store.getUsedCapacity()} and has ${harvester.store.getFreeCapacity()} free capacity`
+    );
+    if (harvester.store.getFreeCapacity() !== 0) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      console.log(`${harvester.name} move to ${sources[0]} and harvest`);
+      // check if harvester is near source
+      if (!harvester.pos.isNearTo(sources[0])) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        console.log(`${harvester.name} is moving to ${sources[0]}`);
+        harvester.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } });
+      } else {
+        // set harvester to harvest
+        harvester.harvest(sources[0]);
+      }
+    }
+    if (harvester.store.getFreeCapacity() === 0) {
+      harvester.moveTo(spawn1, { visualizePathStyle: { stroke: "#ffaa00" } });
+      harvester.transfer(spawn1, RESOURCE_ENERGY);
+    }
+  });
 });
