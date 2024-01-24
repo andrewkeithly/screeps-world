@@ -66,5 +66,9 @@
   },
   "dependencies": {
     "source-map": "~0.6.1"
+  },
+  "volta": {
+    "node": "12.22.12",
+    "yarn": "1.22.21"
   }
 }
