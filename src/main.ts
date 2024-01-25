@@ -1,5 +1,8 @@
 import { ErrorMapper } from "utils/ErrorMapper";
 
+import harvester from "./harvester";
+import upgrader from "./upgrader";
+
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -50,6 +53,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
   console.log(`Room energy available: ${room.energyAvailable}`);
   const sources = spawn1.room.find(FIND_SOURCES);
   const harvesters = _.filter(Game.creeps, creep => creep.memory.role === "harvester");
+  const upgraders = _.filter(Game.creeps, creep => creep.memory.role === "upgrader");
 
   // Spawn a creep
   if (spawn1.spawning) {
@@ -61,38 +65,35 @@ export const loop = ErrorMapper.wrapLoop(() => {
   } else {
     console.log(`Harvesters: ${harvesters.length}`);
 
-    if (harvesters.length < 10) {
+    if (harvesters.length < 5) {
       const newName = `Harvester ${harvesters.length}`;
       console.log("Spawning new harvester: " + newName);
-      spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
-        memory: { role: "harvester", room: room.name, working: true }
+      if (!spawn1.spawning) {
+        const spawnStatus = spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
+          memory: { role: "harvester", room: room.name, working: true }
+        });
+        console.log(`Harvester spawn status: ${spawnStatus}`);
+      }
+    }
+    if (upgraders.length < 5) {
+      console.log(`Upgraders length: ${upgraders.length}`);
+      const newName = `Upgrader ${upgraders.length}`;
+      console.log("Spawning new upgrader: " + newName);
+      const spawnStatus = spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
+        memory: { role: "upgrader", room: room.name, working: false }
       });
+      console.log(`Upgraders spawn status: ${spawnStatus}`);
     }
   }
 
-  // Set creeps to work
-  harvesters.forEach(harvester => {
-    console.log(
-      `${
-        harvester.name
-      } is carrying ${harvester.store.getUsedCapacity()} and has ${harvester.store.getFreeCapacity()} free capacity`
-    );
-    if (harvester.store.getFreeCapacity() !== 0) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      console.log(`${harvester.name} move to ${sources[0]} and harvest`);
-      // check if harvester is near source
-      if (!harvester.pos.isNearTo(sources[0])) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        console.log(`${harvester.name} is moving to ${sources[0]}`);
-        harvester.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } });
-      } else {
-        // set harvester to harvest
-        harvester.harvest(sources[0]);
-      }
+  for (const name in Game.creeps) {
+    const creep: Creep = Game.creeps[name];
+    // check if creep is harvester or upgrader
+    if (creep.memory.role === "harvester") {
+      harvester.run(creep);
     }
-    if (harvester.store.getFreeCapacity() === 0) {
-      harvester.moveTo(spawn1, { visualizePathStyle: { stroke: "#ffaa00" } });
-      harvester.transfer(spawn1, RESOURCE_ENERGY);
+    if (creep.memory.role === "upgrader") {
+      upgrader.run(creep);
     }
-  });
+  }
 });
