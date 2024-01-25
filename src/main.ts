@@ -1,7 +1,5 @@
+import { builder, harvester, upgrader } from "roles";
 import { ErrorMapper } from "utils/ErrorMapper";
-
-import harvester from "./harvester";
-import upgrader from "./upgrader";
 
 declare global {
   /*
@@ -51,9 +49,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
   console.log(`Room energy available: ${room.energyAvailable}`);
-  const sources = spawn1.room.find(FIND_SOURCES);
-  const harvesters = _.filter(Game.creeps, creep => creep.memory.role === "harvester");
-  const upgraders = _.filter(Game.creeps, creep => creep.memory.role === "upgrader");
+  const harvesters = _.filter(Game.creeps, creep => creep.memory.role === harvester.role);
+  const upgraders = _.filter(Game.creeps, creep => creep.memory.role === upgrader.role);
+  const builders = _.filter(Game.creeps, creep => creep.memory.role === builder.role);
 
   // Spawn a creep
   if (spawn1.spawning) {
@@ -62,27 +60,32 @@ export const loop = ErrorMapper.wrapLoop(() => {
       align: "left",
       opacity: 0.8
     });
-  } else {
-    console.log(`Harvesters: ${harvesters.length}`);
-
-    if (harvesters.length < 5) {
-      const newName = `Harvester ${harvesters.length}`;
-      console.log("Spawning new harvester: " + newName);
-      if (!spawn1.spawning) {
-        const spawnStatus = spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
-          memory: { role: "harvester", room: room.name, working: true }
-        });
-        console.log(`Harvester spawn status: ${spawnStatus}`);
-      }
+  } else if (room.energyAvailable >= 200) {
+    if (builders.length < 1) {
+      const newName = `Builders ${builders.length}`;
+      console.log("Spawning new builder: " + newName);
+      const spawnStatus = spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
+        memory: { role: "builder", room: room.name, working: false }
+      });
+      console.log(`Builders spawn status: ${spawnStatus}`);
     }
-    if (upgraders.length < 5) {
-      console.log(`Upgraders length: ${upgraders.length}`);
+    if (upgraders.length < 3) {
       const newName = `Upgrader ${upgraders.length}`;
       console.log("Spawning new upgrader: " + newName);
       const spawnStatus = spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
         memory: { role: "upgrader", room: room.name, working: false }
       });
       console.log(`Upgraders spawn status: ${spawnStatus}`);
+    }
+
+    if (harvesters.length < 1) {
+      const newName = `Harvester ${harvesters.length}`;
+      console.log("Spawning new harvester: " + newName);
+
+      const spawnStatus = spawn1.spawnCreep([WORK, CARRY, MOVE], newName, {
+        memory: { role: "harvester", room: room.name, working: false }
+      });
+      console.log(`Harvester spawn status: ${spawnStatus}`);
     }
   }
 
@@ -94,6 +97,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
     if (creep.memory.role === "upgrader") {
       upgrader.run(creep);
+    }
+    if (creep.memory.role === "builder") {
+      builder.run(creep);
     }
   }
 });

@@ -25,5 +25,6 @@
   },
   "typescript.tsdk": "./node_modules/typescript/lib",
   "eslint.enable": true,
-  "cSpell.words": ["BODYPARTS", "camelcase", "linebreak", "screeps", "upgrader", "upgraders"]
+  "cSpell.words": ["BODYPARTS", "camelcase", "linebreak", "screeps", "upgrader", "upgraders"],
+  "typescript.validate.enable": true
 }
