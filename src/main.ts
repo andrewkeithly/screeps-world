@@ -92,13 +92,13 @@ export const loop = ErrorMapper.wrapLoop(() => {
   for (const name in Game.creeps) {
     const creep: Creep = Game.creeps[name];
     // check if creep is harvester or upgrader
-    if (creep.memory.role === "harvester") {
+    if (creep.memory.role === harvester.role) {
       harvester.run(creep);
     }
-    if (creep.memory.role === "upgrader") {
+    if (creep.memory.role === upgrader.role) {
       upgrader.run(creep);
     }
-    if (creep.memory.role === "builder") {
+    if (creep.memory.role === builder.role) {
       builder.run(creep);
     }
   }
