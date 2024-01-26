@@ -25,6 +25,8 @@ const builder: Builder = {
         if (creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
           creep.moveTo(targets[0], { visualizePathStyle: { stroke: "#ffffff" } });
         }
+      } else if (creep.store[RESOURCE_ENERGY] === 50) {
+        creep.moveTo(1, 1);
       }
     } else {
       const sources = creep.room.find(FIND_SOURCES);
