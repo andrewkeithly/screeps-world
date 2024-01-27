@@ -5,10 +5,13 @@ export class ErrorMapper {
   private static _consumer?: SourceMapConsumer;
 
   public static get consumer(): SourceMapConsumer {
+    // eslint-disable-next-line no-underscore-dangle
     if (this._consumer == null) {
+      // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-var-requires
       this._consumer = new SourceMapConsumer(require("main.js.map"));
     }
 
+    // eslint-disable-next-line no-underscore-dangle
     return this._consumer;
   }
 
