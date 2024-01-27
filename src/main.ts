@@ -1,6 +1,6 @@
-import actions, { ActionTypes, spawn } from "actions";
+import { ActionTypes, SpawnTemplate } from "actions/spawn";
+import actions, { spawn } from "actions";
 import { ErrorMapper } from "utils/ErrorMapper";
-import { SpawnTemplate } from "actions/spawn";
 
 declare global {
   /*
