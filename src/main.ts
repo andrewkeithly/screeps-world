@@ -1,4 +1,4 @@
-import { Actions, build, harvest, spawn, upgrade } from "actions";
+import actions, { ActionTypes, spawn } from "actions";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { SpawnTemplate } from "actions/spawn";
 
@@ -18,7 +18,7 @@ declare global {
   }
 
   interface CreepMemory {
-    action: Actions;
+    action: ActionTypes;
     room: string;
     working: boolean;
   }
@@ -47,20 +47,20 @@ export const loop = ErrorMapper.wrapLoop(() => {
   // spawn creeps
   const spawns = Game.rooms.sim.find(FIND_MY_SPAWNS);
   const spawnTemplate: SpawnTemplate = {
-    [Actions.Build]: {
-      action: Actions.Build,
+    [ActionTypes.Build]: {
+      action: ActionTypes.Build,
       priority: 3,
       total: 6,
       body: [WORK, CARRY, MOVE]
     },
-    [Actions.Upgrade]: {
-      action: Actions.Upgrade,
+    [ActionTypes.Upgrade]: {
+      action: ActionTypes.Upgrade,
       priority: 2,
       total: 2,
       body: [WORK, CARRY, MOVE]
     },
-    [Actions.Harvest]: {
-      action: Actions.Harvest,
+    [ActionTypes.Harvest]: {
+      action: ActionTypes.Harvest,
       priority: 1,
       total: 2,
       body: [WORK, CARRY, MOVE]
@@ -68,17 +68,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
   };
   spawn(spawns, spawnTemplate);
 
-  for (const name in Game.creeps) {
-    const creep: Creep = Game.creeps[name];
-    // check if creep is harvester or upgrader
-    if (creep.memory.action === Actions.Harvest) {
-      harvest(creep);
-    }
-    if (creep.memory.action === Actions.Upgrade) {
-      upgrade(creep);
-    }
-    if (creep.memory.action === Actions.Build) {
-      build(creep);
-    }
+  for (const creepKey in Game.creeps) {
+    const creep: Creep = Game.creeps[creepKey];
+    actions[creep.memory.action](creep);
   }
 });

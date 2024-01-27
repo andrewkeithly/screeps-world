@@ -1,33 +1,33 @@
-import { ActionCounts, Actions, getActionCounts } from ".";
+import { ActionCounts, ActionTypes, getActionCounts } from ".";
 /**
  * Spawn action creates creeps based on a template
  */
 
 export type SpawnTemplate = {
-  [action in Actions]: {
-    action: Actions;
+  [action in ActionTypes]: {
+    action: ActionTypes;
     priority: number;
     total: number;
     body: BodyPartConstant[];
   };
 };
 
-type ActionType = SpawnTemplate[Actions];
+type ActionType = SpawnTemplate[ActionTypes];
 
 // create type for an array of SpawnTemplate objects
 
 function getSpawnOrder(spawnTemplate: SpawnTemplate, actionCounts: ActionCounts): ActionType[] {
   const orderedSpawnData: ActionType[] = [];
   for (const action in spawnTemplate) {
-    const { priority, total } = spawnTemplate[action as Actions];
-    const amountRemaining = total - (actionCounts[action as Actions] ?? 0);
+    const { priority, total } = spawnTemplate[action as ActionTypes];
+    const amountRemaining = total - (actionCounts[action as ActionTypes] ?? 0);
 
     if (amountRemaining > 0) {
       const index = orderedSpawnData.findIndex(item => item.priority > priority);
       if (index !== -1) {
-        orderedSpawnData.splice(index, 0, spawnTemplate[action as Actions]);
+        orderedSpawnData.splice(index, 0, spawnTemplate[action as ActionTypes]);
       } else {
-        orderedSpawnData.push(spawnTemplate[action as Actions]);
+        orderedSpawnData.push(spawnTemplate[action as ActionTypes]);
       }
     }
   }
