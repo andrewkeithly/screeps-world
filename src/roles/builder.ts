@@ -3,12 +3,10 @@
  */
 
 interface Builder {
-  role: string;
   run: (creep: Creep) => void;
 }
 
 const builder: Builder = {
-  role: "builder",
   run(creep: Creep): void {
     if (creep.memory.working && creep.store[RESOURCE_ENERGY] === 0) {
       creep.memory.working = false;
@@ -25,7 +23,7 @@ const builder: Builder = {
         if (creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
           creep.moveTo(targets[0], { visualizePathStyle: { stroke: "#ffffff" } });
         }
-      } else if (creep.store[RESOURCE_ENERGY] === 50) {
+      } else if (creep.store.getFreeCapacity() === 0) {
         creep.moveTo(1, 1);
       }
     } else {
