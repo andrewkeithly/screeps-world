@@ -9,11 +9,7 @@
     "editor.formatOnSave": false
   },
   "editor.codeActionsOnSave": {
-<<<<<<< HEAD
     "source.fixAll.eslint": "explicit"
-=======
-    "source.fixAll.eslint": true
->>>>>>> f2a463b (Added spellcheck to settings)
   },
   "editor.formatOnSave": true,
   "editor.renderWhitespace": "boundary",
@@ -29,6 +25,5 @@
   },
   "typescript.tsdk": "./node_modules/typescript/lib",
   "eslint.enable": true,
-  "cSpell.words": ["screeps", "upgrader", "upgraders"],
-  "typescript.validate.enable": true
+  "cSpell.words": ["BODYPARTS", "camelcase", "linebreak", "screeps", "upgrader", "upgraders"]
 }
