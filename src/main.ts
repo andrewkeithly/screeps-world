@@ -1,4 +1,4 @@
-import { ActionTypes, SpawnTemplate } from "actions/spawn";
+import { Actions, SpawnTemplate, SpawnTypes } from "actions/spawn";
 import actions, { spawn } from "actions";
 import { ErrorMapper } from "utils/ErrorMapper";
 
@@ -18,8 +18,9 @@ declare global {
   }
 
   interface CreepMemory {
-    action: ActionTypes;
+    actions: Actions[];
     room: string;
+    type: SpawnTypes;
     working: boolean;
   }
 
@@ -47,22 +48,25 @@ export const loop = ErrorMapper.wrapLoop(() => {
   // spawn creeps
   const spawns = Game.rooms.sim.find(FIND_MY_SPAWNS);
   const spawnTemplate: SpawnTemplate = {
-    [ActionTypes.Build]: {
-      action: ActionTypes.Build,
+    dudes: {
+      actions: [Actions.Build],
       priority: 3,
       total: 6,
+      type: SpawnTypes.medium,
       body: [WORK, CARRY, MOVE]
     },
-    [ActionTypes.Upgrade]: {
-      action: ActionTypes.Upgrade,
+    bros: {
+      actions: [Actions.Upgrade],
       priority: 2,
       total: 2,
+      type: SpawnTypes.medium,
       body: [WORK, CARRY, MOVE]
     },
-    [ActionTypes.Harvest]: {
-      action: ActionTypes.Harvest,
+    guys: {
+      actions: [Actions.Harvest],
       priority: 1,
       total: 2,
+      type: SpawnTypes.medium,
       body: [WORK, CARRY, MOVE]
     }
   };
@@ -70,6 +74,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   for (const creepKey in Game.creeps) {
     const creep: Creep = Game.creeps[creepKey];
-    actions[creep.memory.action](creep);
+    const initialAction = creep.memory.actions[0];
+    actions[initialAction](creep);
   }
 });
