@@ -9,9 +9,9 @@ export enum Actions {
 }
 
 export enum SpawnTypes {
-  small,
-  medium,
-  large
+  small = "small",
+  medium = "medium",
+  large = "large"
 }
 
 export interface CreepType {
