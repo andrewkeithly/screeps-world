@@ -51,7 +51,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     dudes: {
       actions: [Actions.Build],
       priority: 3,
-      total: 6,
+      total: 3,
       type: SpawnTypes.medium,
       body: [WORK, CARRY, MOVE]
     },
@@ -65,7 +65,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     guys: {
       actions: [Actions.Harvest],
       priority: 1,
-      total: 2,
+      total: 1,
       type: SpawnTypes.medium,
       body: [WORK, CARRY, MOVE]
     }
